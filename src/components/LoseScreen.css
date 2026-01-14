@@ -1,0 +1,23 @@
+.overlay-content.lose {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+}
+
+.overlay-content.lose .overlay-title {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.overlay-content.lose .stat-value {
+  color: #f5576c;
+}
+
+.overlay-content.lose .overlay-button {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+}
+
+.overlay-content.lose .overlay-button:hover {
+  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+}
