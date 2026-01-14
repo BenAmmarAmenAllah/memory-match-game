@@ -1,0 +1,99 @@
+.help-button {
+  position: relative;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border: 3px solid #ffaa00;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  font-family: 'Arial', sans-serif;
+  margin: 10px;
+}
+
+.help-button:hover:not(.disabled) {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+  background: linear-gradient(135deg, #ffed4e, #ffd700);
+}
+
+.help-button:active:not(.disabled) {
+  transform: scale(0.95);
+}
+
+.help-button.disabled {
+  background: linear-gradient(135deg, #999, #bbb);
+  border-color: #666;
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.help-icon {
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 2px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.hint-count {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background: #ff6b6b;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.help-button.disabled .hint-count {
+  background: #666;
+}
+
+/* Animation for when hint is used */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.help-button:active:not(.disabled) {
+  animation: pulse 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .help-button {
+    width: 60px;
+    height: 60px;
+  }
+
+  .help-icon {
+    font-size: 28px;
+  }
+
+  .hint-count {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+}

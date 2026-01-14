@@ -5,6 +5,7 @@ import ProgressBar from './components/ProgressBar'
 import WinScreen from './components/WinScreen'
 import LoseScreen from './components/LoseScreen'
 import MatchedContainer from './components/MatchedContainer'
+import HelpButton from './components/HelpButton'
 import { useGame, GAME_ACTIONS } from './contexts/GameContext'
 import { LEVELS } from './data/levels'
 import './App.css'
@@ -47,6 +48,7 @@ function App() {
       <div className="game-info">
         <Timer timeRemaining={state.timeRemaining} />
         <ProgressBar current={state.matchedPairs} total={totalPairs} />
+        <HelpButton />
       </div>
 
       <div className="game-layout">

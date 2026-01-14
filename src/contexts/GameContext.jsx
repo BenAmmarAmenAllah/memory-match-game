@@ -18,7 +18,10 @@ export const GAME_ACTIONS = {
   TIMER_TICK: 'TIMER_TICK',
   GAME_WON: 'GAME_WON',
   GAME_LOST: 'GAME_LOST',
-  SET_DISABLED: 'SET_DISABLED'
+  SET_DISABLED: 'SET_DISABLED',
+  USE_HINT: 'USE_HINT',
+  REVEAL_HINT: 'REVEAL_HINT',
+  HIDE_HINT: 'HIDE_HINT'
 };
 
 // Initial State
@@ -30,7 +33,9 @@ const initialState = {
   gameStatus: 'idle', // 'idle' | 'playing' | 'won' | 'lost'
   timeRemaining: 0,
   timeElapsed: 0,
-  disabled: false
+  disabled: false,
+  hintsRemaining: 0,
+  hintedCards: []
 };
 
 // Reducer Function
@@ -47,7 +52,9 @@ function gameReducer(state, action) {
         gameStatus: 'playing',
         timeRemaining: currentLevel.timerMinutes * 60,
         timeElapsed: 0,
-        disabled: false
+        disabled: false,
+        hintsRemaining: currentLevel.hints,
+        hintedCards: []
       };
     }
 
@@ -143,6 +150,69 @@ function gameReducer(state, action) {
         ...state,
         disabled: action.payload.disabled
       };
+
+    case GAME_ACTIONS.USE_HINT: {
+      if (state.hintsRemaining <= 0 || state.hintedCards.length > 0) {
+        return state;
+      }
+      
+      // Find first unmatched pair
+      const unmatchedCards = state.cards.filter(c => !c.isMatched && !c.isFlipped);
+      const emojiGroups = {};
+      
+      unmatchedCards.forEach(card => {
+        if (!emojiGroups[card.emoji]) {
+          emojiGroups[card.emoji] = [];
+        }
+        emojiGroups[card.emoji].push(card);
+      });
+      
+      // Find first pair
+      let hintPair = null;
+      for (const emoji in emojiGroups) {
+        if (emojiGroups[emoji].length === 2) {
+          hintPair = emojiGroups[emoji];
+          break;
+        }
+      }
+      
+      if (!hintPair) {
+        return state;
+      }
+      
+      return {
+        ...state,
+        hintsRemaining: state.hintsRemaining - 1,
+        hintedCards: [hintPair[0].id, hintPair[1].id],
+        disabled: true
+      };
+    }
+
+    case GAME_ACTIONS.REVEAL_HINT: {
+      const { cardIds } = action.payload;
+      const updatedCards = state.cards.map(c =>
+        cardIds.includes(c.id) ? { ...c, isFlipped: true } : c
+      );
+      
+      return {
+        ...state,
+        cards: updatedCards
+      };
+    }
+
+    case GAME_ACTIONS.HIDE_HINT: {
+      const { cardIds } = action.payload;
+      const updatedCards = state.cards.map(c =>
+        cardIds.includes(c.id) ? { ...c, isFlipped: false } : c
+      );
+      
+      return {
+        ...state,
+        cards: updatedCards,
+        hintedCards: [],
+        disabled: false
+      };
+    }
 
     default:
       return state;
