@@ -4,6 +4,7 @@ import Timer from './components/Timer'
 import ProgressBar from './components/ProgressBar'
 import WinScreen from './components/WinScreen'
 import LoseScreen from './components/LoseScreen'
+import MatchedContainer from './components/MatchedContainer'
 import { useGame, GAME_ACTIONS } from './contexts/GameContext'
 import { LEVELS } from './data/levels'
 import './App.css'
@@ -13,6 +14,9 @@ function App() {
   
   const currentLevel = LEVELS[state.level]
   const totalPairs = currentLevel.cardsCount / 2
+  
+  // Get matched cards for the container
+  const matchedCards = state.cards.filter(card => card.isMatched)
 
   function handleCardClick(cardId) {
     dispatch({ 
@@ -45,12 +49,19 @@ function App() {
         <ProgressBar current={state.matchedPairs} total={totalPairs} />
       </div>
 
-      <GameBoard 
-        cards={state.cards}
-        onCardClick={handleCardClick}
-        disabled={state.disabled}
-        gridColumns={currentLevel.gridColumns}
-      />
+      <div className="game-layout">
+        <MatchedContainer 
+          matchedCards={matchedCards}
+          totalPairs={totalPairs}
+        />
+        
+        <GameBoard 
+          cards={state.cards}
+          onCardClick={handleCardClick}
+          disabled={state.disabled}
+          gridColumns={currentLevel.gridColumns}
+        />
+      </div>
 
       {state.gameStatus === 'won' && (
         <WinScreen 
