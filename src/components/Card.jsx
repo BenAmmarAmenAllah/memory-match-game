@@ -1,4 +1,5 @@
 import './Card.css';
+import GameLogo from './GameLogo';
 
 function Card({ card, onClick, disabled }) {
   const handleClick = () => {
@@ -14,7 +15,9 @@ function Card({ card, onClick, disabled }) {
     >
       <div className="card-inner">
         <div className="card-front">
-          <span className="card-icon">?</span>
+          <span className="card-icon">
+            <GameLogo />
+          </span>
         </div>
         <div className="card-back">
           <span className="card-emoji">{card.emoji}</span>
