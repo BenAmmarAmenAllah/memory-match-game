@@ -1,53 +1,45 @@
-.timer {
+.timer-circle-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-weight: 700;
-  transition: all 0.3s;
+  justify-content: center;
 }
 
-.timer-icon {
-  font-size: 1.5rem;
+.timer-svg {
+  transform: rotate(-90deg);
 }
 
-.timer-display {
-  font-size: 1.5rem;
-  font-family: 'Courier New', monospace;
+.circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 6;
+}
+
+.circle-progress {
+  fill: none;
+  stroke: #00f2fe;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+  filter: drop-shadow(0 0 4px #00f2fe);
+}
+
+.circle-progress.warning {
+  stroke: #ff7675;
+  filter: drop-shadow(0 0 4px #ff7675);
+}
+
+.timer-text {
+  position: absolute;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
   color: white;
+  text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-.timer.warning {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  animation: pulse 1s ease-in-out infinite;
-}
-
-.timer.critical {
-  background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
-  animation: pulse 0.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@media (max-width: 768px) {
-  .timer {
-    padding: 0.6rem 1rem;
-  }
-  
-  .timer-icon {
-    font-size: 1.2rem;
-  }
-  
   .timer-display {
     font-size: 1.2rem;
   }

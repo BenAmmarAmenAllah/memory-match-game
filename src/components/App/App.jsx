@@ -61,31 +61,67 @@ function App() {
     }, 100)
   }
 
+  const totalTime = currentLevel.timerMinutes * 60; // Calculate total time in seconds
+
   return (
     <div className="app">
-      <Header level={state.level} onLevelChange={handleLevelChange} />
-      
-      <div className="game-info">
-        <Timer timeRemaining={state.timeRemaining} />
-        <ProgressBar current={state.matchedPairs} total={totalPairs} />
-        <div className="controls-group">
-          <HelpButton />
-          <MusicPlayer />
-        </div>
+      <div className="pause-button-container">
+         <button className="pause-icon-btn">⏸ <br/><span style={{fontSize: '0.6rem'}}>Pause</span></button>
       </div>
 
-      <div className="game-layout">
-        <MatchedContainer 
-          matchedCards={matchedCards}
-          totalPairs={totalPairs}
-        />
+      <div className="glass-panel">
         
-        <GameBoard 
-          cards={state.cards}
-          onCardClick={handleCardClick}
-          disabled={state.disabled}
-          gridColumns={currentLevel.gridColumns}
-        />
+        {/* Dashboard Header */}
+        <div className="dashboard-header">
+          {/* Left: Circular Timer */}
+          <div className="dashboard-left">
+             <Timer timeRemaining={state.timeRemaining} totalTime={totalTime} />
+          </div>
+
+          {/* Center: Score & Level */}
+          <div className="dashboard-center">
+            <div className="score-display">SCORE: {state.matchedPairs * 125}</div>
+            <div className="level-display">Level {state.level === 'easy' ? '1' : state.level === 'medium' ? '2' : '3'}</div>
+          </div>
+
+          {/* Right: Combo & Stats */}
+          <div className="dashboard-right">
+             <div className="combo-container">
+                <span className="combo-text">COMBO: {state.matchedPairs > 0 ? (state.matchedPairs % 5) + 1 : 0}x</span>
+                <ProgressBar current={state.matchedPairs} total={totalPairs} />
+             </div>
+             <button className="stats-btn">Stats</button>
+          </div>
+        </div>
+
+        {/* Hidden original header for functionality if needed, but we used custom UI above */}
+        {/* <Header level={state.level} onLevelChange={handleLevelChange} /> */}
+        
+        {/* Controls (Music/Help) - moved to bottom or hidden/integrated? Images shows music in bottom right or elsewhere. 
+            Let's keep them handy but maybe less obtrusive or integrated into dashboard? 
+            For now, let's put them floating bottom right or just below dashboard.
+        */}
+        
+        <div className="game-layout">
+          <GameBoard 
+            cards={state.cards}
+            onCardClick={handleCardClick}
+            disabled={state.disabled}
+            gridColumns={currentLevel.gridColumns}
+          />
+        </div>
+        
+         <div className="bottom-controls">
+            <HelpButton />
+            <MusicPlayer />
+            {/* Level Controls as small pills below */}
+            <div className="mini-level-selector">
+                <span onClick={() => handleLevelChange('easy')}>1</span>
+                <span onClick={() => handleLevelChange('medium')}>2</span>
+                <span onClick={() => handleLevelChange('hard')}>3</span>
+            </div>
+        </div>
+
       </div>
 
       {state.gameStatus === 'won' && (
