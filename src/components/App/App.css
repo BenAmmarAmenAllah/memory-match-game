@@ -28,6 +28,12 @@
   flex-wrap: wrap;
 }
 
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 @media (max-width: 1024px) {
   .game-layout {
     flex-direction: column;

@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useGame, GAME_ACTIONS } from '../../context/GameContext';
+import { useAudio } from '../../context/AudioContext';
 import './HelpButton.css';
 
 function HelpButton() {
   const { state, dispatch } = useGame();
+  const { playSound } = useAudio();
 
   const handleHintClick = () => {
     if (state.hintsRemaining <= 0 || state.gameStatus !== 'playing' || state.disabled) {
@@ -11,6 +13,7 @@ function HelpButton() {
     }
 
     // Use hint - find and mark a pair
+    playSound('HINT');
     dispatch({ type: GAME_ACTIONS.USE_HINT });
   };
 
