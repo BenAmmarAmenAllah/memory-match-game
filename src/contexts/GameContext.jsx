@@ -1,7 +1,8 @@
-import { createContext, useReducer, useContext, useEffect } from 'react';
+import { createContext, useReducer, useContext, useEffect, useCallback } from 'react';
 import { EMOJIS } from '../data/emojis';
 import { LEVELS, DEFAULT_LEVEL } from '../data/levels';
 import { generateCards } from '../utils/cardUtils';
+import { useTimer } from '../hooks/useTimer';
 
 // Create Context
 const GameContext = createContext();
@@ -157,23 +158,33 @@ export function GameProvider({ children }) {
     dispatch({ type: GAME_ACTIONS.START_GAME });
   }, [state.level]);
 
-  // Timer countdown effect
-  useEffect(() => {
-    if (state.gameStatus !== 'playing') return;
+  // Timer tick callback
+  const handleTimerTick = useCallback(() => {
+    dispatch({ type: GAME_ACTIONS.TIMER_TICK });
+  }, []);
 
-    const timer = setInterval(() => {
-      dispatch({ type: GAME_ACTIONS.TIMER_TICK });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [state.gameStatus]);
-
-  // Check for time's up
-  useEffect(() => {
-    if (state.gameStatus === 'playing' && state.timeRemaining === 0) {
+  // Timer time-up callback
+  const handleTimeUp = useCallback(() => {
+    if (state.gameStatus === 'playing') {
       dispatch({ type: GAME_ACTIONS.GAME_LOST });
     }
-  }, [state.timeRemaining, state.gameStatus]);
+  }, [state.gameStatus]);
+
+  // Use the custom timer hook
+  const { stopTimer, resetTimer } = useTimer(
+    state.timeRemaining,
+    state.gameStatus === 'playing',
+    handleTimerTick,
+    handleTimeUp
+  );
+
+  // Check for time's up condition
+  useEffect(() => {
+    if (state.gameStatus === 'playing' && state.timeRemaining === 0) {
+      stopTimer();
+      dispatch({ type: GAME_ACTIONS.GAME_LOST });
+    }
+  }, [state.timeRemaining, state.gameStatus, stopTimer]);
 
   // Check for win condition
   useEffect(() => {
@@ -181,9 +192,10 @@ export function GameProvider({ children }) {
     const totalPairs = currentLevel.cardsCount / 2;
     
     if (state.matchedPairs === totalPairs && state.matchedPairs > 0) {
+      stopTimer();
       dispatch({ type: GAME_ACTIONS.GAME_WON });
     }
-  }, [state.matchedPairs, state.level]);
+  }, [state.matchedPairs, state.level, stopTimer]);
 
   // Handle card matching logic
   useEffect(() => {
