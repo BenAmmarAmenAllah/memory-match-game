@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useGame, GAME_ACTIONS } from '../contexts/GameContext';
+import { useGame, GAME_ACTIONS } from '../../context/GameContext';
 import './HelpButton.css';
 
 function HelpButton() {

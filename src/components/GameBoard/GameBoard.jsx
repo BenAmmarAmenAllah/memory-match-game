@@ -1,4 +1,4 @@
-import Card from './Card';
+import Card from '../Card/Card';
 import './GameBoard.css';
 
 function GameBoard({ cards, onCardClick, disabled, gridColumns }) {
