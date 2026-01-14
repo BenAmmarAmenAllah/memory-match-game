@@ -26,7 +26,7 @@ A beautiful, interactive memory matching card game built with **React** and **Vi
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/memory-match-game.git
+git clone https://github.com/BenAmmarAmenAllah/memory-match-game.git
 
 # Navigate to project directory
 cd memory-match-game
