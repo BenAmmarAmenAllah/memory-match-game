@@ -257,6 +257,84 @@
   display: none; 
 }
 
+/* Track Selector */
+.track-selector {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 0.8rem;
+}
+
+.track-label {
+  font-size: 0.8rem;
+  color: rgba(26, 26, 46, 0.6);
+  font-weight: 500;
+}
+
+.track-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.track-artist {
+  font-size: 0.85rem;
+  color: rgba(26, 26, 46, 0.7);
+}
+
+.track-mood {
+  font-size: 0.75rem;
+  color: #00d2ff;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.track-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.track-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.track-btn:hover {
+  background: rgba(0, 210, 255, 0.2);
+  border-color: #00d2ff;
+  transform: scale(1.1);
+}
+
+.track-btn:active {
+  transform: scale(0.95);
+}
+
+.track-counter {
+  font-size: 0.9rem;
+  color: rgba(26, 26, 46, 0.6);
+  min-width: 40px;
+  text-align: center;
+}
+
 
 /* Close Button */
 .close-main-btn {

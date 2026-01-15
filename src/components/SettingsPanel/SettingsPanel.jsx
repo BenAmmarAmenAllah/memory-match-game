@@ -13,7 +13,11 @@ function SettingsPanel({ onClose }) {
     isMuted,
     toggleMute,
     isPlaying,
-    toggleMusic
+    toggleMusic,
+    currentTrack,
+    availableTracks,
+    nextTrack,
+    prevTrack
   } = useAudio();
 
   const { state, dispatch } = useGame();
@@ -117,6 +121,27 @@ function SettingsPanel({ onClose }) {
               </button>
             </div>
           </div>
+
+          {/* Track Selector */}
+          {currentTrack && (
+            <div className="track-selector">
+              <div className="track-info">
+                <span className="track-label">🎧 Now Playing:</span>
+                <span className="track-name">{currentTrack.name}</span>
+                <span className="track-artist">by {currentTrack.artist}</span>
+                <span className="track-mood">{currentTrack.mood}</span>
+              </div>
+              {availableTracks.length > 1 && (
+                <div className="track-controls">
+                  <button className="track-btn" onClick={prevTrack} title="Previous track">◀️</button>
+                  <span className="track-counter">
+                    {availableTracks.findIndex(t => t.id === currentTrack.id) + 1} / {availableTracks.length}
+                  </span>
+                  <button className="track-btn" onClick={nextTrack} title="Next track">▶️</button>
+                </div>
+              )}
+            </div>
+          )}
           
           <div className="slider-group music-slider">
             <div className="slider-label">

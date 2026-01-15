@@ -2,29 +2,101 @@ import { createContext, useContext, useState, useEffect, useRef, useCallback } f
 
 const AudioContext = createContext();
 
-// Audio file paths - NCS Cruising for background music
+/**
+ * ============================================
+ * MUSIC TRACKS CONFIGURATION
+ * ============================================
+ * Add new NCS tracks here - just add to the array!
+ * Download from: https://ncs.io/music-search?genre=60 (Lofi Hip-Hop)
+ */
+export const MUSIC_TRACKS = [
+  {
+    id: 'cruising',
+    name: 'Cruising',
+    artist: 'Aisake, Dosi',
+    file: '/audio/Aisake, Dosi - Cruising [NCS Release].mp3',
+    mood: 'Peaceful, Dreamy',
+    genre: 'Lofi Hip-Hop'
+  },
+  // Add more tracks here in the future:
+  // {
+  //   id: 'miffy-cafe',
+  //   name: 'miffy cafe',
+  //   artist: 'Artist Name',
+  //   file: '/audio/miffy-cafe.mp3',
+  //   mood: 'Relaxed',
+  //   genre: 'Lofi Hip-Hop'
+  // },
+  // {
+  //   id: 'apart',
+  //   name: 'apart',
+  //   artist: 'Artist Name',
+  //   file: '/audio/apart.mp3',
+  //   mood: 'Dreamy, Laid Back',
+  //   genre: 'Lofi Hip-Hop'
+  // },
+];
+
+/**
+ * ============================================
+ * SOUND EFFECTS CONFIGURATION
+ * ============================================
+ * Add new sound effects here - just add to the object!
+ */
+export const SOUND_EFFECTS = {
+  FLIP: {
+    file: '/audio/flip.mp3',
+    description: 'Card flip sound'
+  },
+  MATCH: {
+    file: '/audio/match.mp3',
+    description: 'Successful pair match'
+  },
+  WIN: {
+    file: '/audio/win.mp3',
+    description: 'Game won celebration'
+  },
+  LOSE: {
+    file: '/audio/lose.mp3',
+    description: 'Game over / time up'
+  },
+  HINT: {
+    file: '/audio/hint.mp3',
+    description: 'Hint button used'
+  },
+  // Add more SFX here:
+  // COMBO: {
+  //   file: '/audio/combo.mp3',
+  //   description: 'Combo streak sound'
+  // },
+};
+
+// Legacy support - keep AUDIO_FILES for backwards compatibility
 export const AUDIO_FILES = {
-  MUSIC: '/audio/Aisake, Dosi - Cruising [NCS Release].mp3',
-  FLIP: '/audio/flip.mp3',
-  MATCH: '/audio/match.mp3',
-  WIN: '/audio/win.mp3',
-  LOSE: '/audio/lose.mp3',
-  HINT: '/audio/hint.mp3'
+  MUSIC: MUSIC_TRACKS[0]?.file || '',
+  ...Object.fromEntries(
+    Object.entries(SOUND_EFFECTS).map(([key, value]) => [key, value.file])
+  )
 };
 
 /**
- * AudioProvider Component
+ * ============================================
+ * AUDIO PROVIDER COMPONENT
+ * ============================================
  * 
- * Manages all audio in the game:
- * - Background music (loops, user-triggered start)
- * - Sound effects (SFX)
- * - Volume controls
+ * Features:
+ * - Multiple background music tracks with selection
+ * - Sound effects (SFX) for game events
+ * - Volume controls (separate for music and SFX)
  * - Mute functionality
+ * - Smooth looping without overlap
+ * - User-interaction-based playback (browser policy compliant)
  * 
  * Uses useRef to avoid recreating Audio objects on re-render.
- * Music starts only after user interaction (browser autoplay policy).
  */
 export function AudioProvider({ children }) {
+  // ============ STATE ============
+  
   // Volume states (0 to 1)
   const [musicVolume, setMusicVolume] = useState(0.3);
   const [sfxVolume, setSfxVolume] = useState(0.5);
@@ -32,44 +104,76 @@ export function AudioProvider({ children }) {
   // Mute state (affects both music and SFX)
   const [isMuted, setIsMuted] = useState(false);
   
-  // Music playing state - separate from mute
+  // Music playing state
   const [isPlaying, setIsPlaying] = useState(false);
   
   // Track if audio has been initialized (after first user interaction)
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Current track selection
+  const [currentTrackId, setCurrentTrackId] = useState(MUSIC_TRACKS[0]?.id || '');
 
-  // useRef to persist the Audio object without re-creating on re-render
+  // ============ REFS ============
+  
+  // Music audio element (persists across re-renders)
   const musicRef = useRef(null);
+  
+  // SFX audio pool (prevents overlapping issues)
+  const sfxPoolRef = useRef({});
+
+  // ============ COMPUTED VALUES ============
+  
+  // Get current track object
+  const currentTrack = MUSIC_TRACKS.find(t => t.id === currentTrackId) || MUSIC_TRACKS[0];
+
+  // ============ EFFECTS ============
 
   /**
-   * Initialize Audio object once on mount
-   * Does NOT auto-play - waits for user interaction
+   * Initialize Audio object on mount and when track changes
    */
   useEffect(() => {
-    // Create Audio object only once
-    musicRef.current = new Audio(AUDIO_FILES.MUSIC);
-    musicRef.current.loop = true; // Enable looping
-    musicRef.current.volume = musicVolume;
-    musicRef.current.preload = 'auto'; // Preload for faster start
+    if (!currentTrack) return;
+
+    // Store current playing state and time before switching
+    const wasPlaying = musicRef.current && !musicRef.current.paused;
+    
+    // Cleanup old audio
+    if (musicRef.current) {
+      musicRef.current.pause();
+      musicRef.current.src = '';
+    }
+
+    // Create new Audio object for the new track
+    musicRef.current = new Audio(currentTrack.file);
+    musicRef.current.loop = true;
+    musicRef.current.volume = isMuted ? 0 : musicVolume;
+    musicRef.current.preload = 'auto';
+    
+    // Resume playing if it was playing before track change
+    if (wasPlaying && isInitialized) {
+      const playPromise = musicRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.warn("Track change play failed:", error.message);
+        });
+      }
+    }
     
     // Cleanup on unmount
     return () => {
       if (musicRef.current) {
         musicRef.current.pause();
-        musicRef.current.src = ''; // Release audio resource
+        musicRef.current.src = '';
         musicRef.current = null;
       }
     };
-  }, []); // Empty dependency - run once on mount
+  }, [currentTrackId]); // Re-run when track changes
 
   /**
    * Update music volume when musicVolume or isMuted changes
-   * Handle play/pause based on isPlaying state
    */
   useEffect(() => {
     if (!musicRef.current) return;
-
-    // Update volume (0 if muted, otherwise actual volume)
     musicRef.current.volume = isMuted ? 0 : musicVolume;
   }, [musicVolume, isMuted]);
 
@@ -80,7 +184,6 @@ export function AudioProvider({ children }) {
     if (!musicRef.current || !isInitialized) return;
 
     if (isPlaying && !isMuted) {
-      // Play with promise handling (required for browser autoplay policy)
       const playPromise = musicRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
@@ -93,9 +196,10 @@ export function AudioProvider({ children }) {
     }
   }, [isPlaying, isMuted, isInitialized]);
 
+  // ============ MUSIC CONTROLS ============
+
   /**
-   * Start music - MUST be called from a user interaction event
-   * This satisfies browser autoplay policies
+   * Start music - MUST be called from user interaction
    */
   const startMusic = useCallback(() => {
     if (!musicRef.current) return;
@@ -103,7 +207,6 @@ export function AudioProvider({ children }) {
     setIsInitialized(true);
     setIsPlaying(true);
     
-    // Attempt to play immediately (user interaction context)
     const playPromise = musicRef.current.play();
     if (playPromise !== undefined) {
       playPromise.catch(error => {
@@ -114,13 +217,13 @@ export function AudioProvider({ children }) {
   }, []);
 
   /**
-   * Stop music completely
+   * Stop music and reset to beginning
    */
   const stopMusic = useCallback(() => {
     if (!musicRef.current) return;
     
     musicRef.current.pause();
-    musicRef.current.currentTime = 0; // Reset to beginning
+    musicRef.current.currentTime = 0;
     setIsPlaying(false);
   }, []);
 
@@ -129,13 +232,42 @@ export function AudioProvider({ children }) {
    */
   const toggleMusic = useCallback(() => {
     if (!isInitialized) {
-      // First time - start music
       startMusic();
     } else {
-      // Toggle play/pause
       setIsPlaying(prev => !prev);
     }
   }, [isInitialized, startMusic]);
+
+  /**
+   * Change to a different track
+   * @param {string} trackId - ID of the track to switch to
+   */
+  const changeTrack = useCallback((trackId) => {
+    const track = MUSIC_TRACKS.find(t => t.id === trackId);
+    if (track) {
+      setCurrentTrackId(trackId);
+    }
+  }, []);
+
+  /**
+   * Skip to next track in the list
+   */
+  const nextTrack = useCallback(() => {
+    const currentIndex = MUSIC_TRACKS.findIndex(t => t.id === currentTrackId);
+    const nextIndex = (currentIndex + 1) % MUSIC_TRACKS.length;
+    setCurrentTrackId(MUSIC_TRACKS[nextIndex].id);
+  }, [currentTrackId]);
+
+  /**
+   * Go to previous track in the list
+   */
+  const prevTrack = useCallback(() => {
+    const currentIndex = MUSIC_TRACKS.findIndex(t => t.id === currentTrackId);
+    const prevIndex = (currentIndex - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
+    setCurrentTrackId(MUSIC_TRACKS[prevIndex].id);
+  }, [currentTrackId]);
+
+  // ============ MUTE CONTROL ============
 
   /**
    * Toggle mute (affects both music and SFX)
@@ -144,25 +276,43 @@ export function AudioProvider({ children }) {
     setIsMuted(prev => !prev);
   }, []);
 
+  // ============ SOUND EFFECTS ============
+
   /**
    * Play a sound effect
-   * Creates a new Audio object each time (SFX can overlap)
+   * @param {string} soundName - Key from SOUND_EFFECTS (e.g., 'FLIP', 'MATCH')
    */
   const playSound = useCallback((soundName) => {
     if (isMuted) return;
     
-    const file = AUDIO_FILES[soundName];
-    if (file) {
-      const audio = new Audio(file);
+    const sfx = SOUND_EFFECTS[soundName];
+    if (sfx) {
+      const audio = new Audio(sfx.file);
       audio.volume = sfxVolume;
       audio.play().catch(e => {
-        // Silent catch - SFX failures are not critical
         console.debug("SFX play failed:", e.message);
       });
     }
   }, [isMuted, sfxVolume]);
 
-  // Context value - all audio controls exposed to children
+  /**
+   * Preload all sound effects for faster playback
+   */
+  const preloadSoundEffects = useCallback(() => {
+    Object.entries(SOUND_EFFECTS).forEach(([key, sfx]) => {
+      const audio = new Audio(sfx.file);
+      audio.preload = 'auto';
+      sfxPoolRef.current[key] = audio;
+    });
+  }, []);
+
+  // Preload SFX on mount
+  useEffect(() => {
+    preloadSoundEffects();
+  }, [preloadSoundEffects]);
+
+  // ============ CONTEXT VALUE ============
+  
   const value = {
     // Volume controls
     musicVolume,
@@ -182,8 +332,17 @@ export function AudioProvider({ children }) {
     stopMusic,
     toggleMusic,
     
+    // Track selection
+    currentTrack,
+    currentTrackId,
+    changeTrack,
+    nextTrack,
+    prevTrack,
+    availableTracks: MUSIC_TRACKS,
+    
     // SFX
-    playSound
+    playSound,
+    availableSounds: Object.keys(SOUND_EFFECTS)
   };
 
   return (
@@ -195,7 +354,6 @@ export function AudioProvider({ children }) {
 
 /**
  * Custom hook to use audio context
- * Throws error if used outside AudioProvider
  */
 export function useAudio() {
   const context = useContext(AudioContext);
@@ -204,4 +362,5 @@ export function useAudio() {
   }
   return context;
 }
+
 
