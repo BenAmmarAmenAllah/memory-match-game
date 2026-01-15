@@ -15,7 +15,7 @@ function Timer({ timeRemaining, totalTime = 300 }) { // Default 5 mins if not pa
   
   return (
     <div className="timer-circle-container">
-      <svg width="100" height="100" className="timer-svg">
+      <svg viewBox="0 0 100 100" className="timer-svg">
         <circle 
           cx="50" cy="50" r={radius} 
           className="circle-bg" 

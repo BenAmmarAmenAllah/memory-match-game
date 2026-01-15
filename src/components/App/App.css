@@ -1,33 +1,41 @@
 .app {
   min-height: 100vh;
-  /* Background is now in index.css */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem;
   position: relative;
+  overflow-x: hidden;
 }
 
 .pause-button-container {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
 }
 
 .pause-icon-btn {
-  background: transparent;
-  border: 2px solid #00f2fe;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid #00f2fe;
   color: #00f2fe;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+  transition: all 0.3s ease;
+}
+
+.pause-icon-btn:hover {
+  background: rgba(0, 242, 254, 0.1);
+  transform: scale(1.05);
 }
 
 .glass-panel {
@@ -36,39 +44,44 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 40px rgba(108, 92, 231, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  border-radius: 30px;
-  padding: 30px;
-  max-width: 900px;
+  border-radius: 20px;
+  padding: 1rem;
   width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: auto;
 }
 
-/* Dashboard Header Layout */
+/* Dashboard Header Layout - Mobile First */
 .dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-areas: 
+    "left right"
+    "center center";
+  gap: 1rem;
   width: 100%;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
 }
 
-.dashboard-left, .dashboard-right {
-  flex: 1;
+.dashboard-left {
+  grid-area: left;
   display: flex;
-  align-items: center;
+  justify-content: flex-start;
 }
 
 .dashboard-right {
+  grid-area: right;
+  display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dashboard-center {
-  flex: 2;
+  grid-area: center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,7 +89,7 @@
 }
 
 .score-display {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: white;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
@@ -84,15 +97,16 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  border: 2px solid rgba(162, 155, 254, 0.3);
-  padding: 0.5rem 2rem;
-  border-radius: 50px;
-  box-shadow: 0 0 20px rgba(108, 92, 231, 0.2);
-  margin-bottom: 0.5rem;
+  border: 1.5px solid rgba(162, 155, 254, 0.3);
+  padding: 0.3rem 1.2rem;
+  border-radius: 30px;
+  box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
 }
 
 .level-display {
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: #00f2fe;
   font-weight: bold;
   text-transform: uppercase;
@@ -103,25 +117,28 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  width: 150px;
+  width: 100%;
+  max-width: 120px;
 }
 
 .combo-text {
+  font-size: 0.8rem;
   font-weight: bold;
   color: #ff7675;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   text-shadow: 0 0 10px rgba(255, 118, 117, 0.5);
 }
 
 .stats-btn {
   background: transparent;
-  border: 2px solid #00f2fe;
+  border: 1.5px solid #00f2fe;
   color: white;
-  padding: 8px 24px;
-  border-radius: 20px;
+  padding: 5px 15px;
+  border-radius: 15px;
   cursor: pointer;
   font-weight: bold;
-  box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+  font-size: 0.8rem;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
   transition: all 0.3s ease;
 }
 
@@ -130,26 +147,37 @@
   color: #2b1055;
 }
 
+.game-layout {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .bottom-controls {
   display: flex;
-  gap: 20px;
-  margin-top: 20px;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
+  padding-top: 1rem;
+  gap: 15px;
 }
 
 .mini-level-selector {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .mini-level-selector span {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.8rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
@@ -158,50 +186,76 @@
 .mini-level-selector span:hover {
   background: white;
   color: #2b1055;
+  border-color: white;
 }
 
-.game-layout {
-  display: flex;
-  flex-direction: column; /* Force Stacked layout like image */
-  gap: 1.5rem;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Hiding original game info if remnants remain */
-.game-info {
-  display: none; 
-}
-
-
-.controls-group {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-@media (max-width: 1024px) {
-  .game-layout {
-    flex-direction: column;
-    align-items: center;
+/* Desktop Styles */
+@media (min-width: 768px) {
+  .app {
+    padding: 2rem;
   }
-}
 
-@media (max-width: 768px) {
-  .game-info {
-    flex-direction: column;
-    padding: 1rem 0.5rem;
-    gap: 1rem;
+  .pause-button-container {
+    top: 20px;
+    right: 20px;
   }
-  
-  .game-info > * {
-    width: 100%;
-    max-width: 400px;
+
+  .pause-icon-btn {
+    width: 55px;
+    height: 55px;
   }
-  
-  .game-layout {
-    padding: 0.5rem;
-    gap: 1rem;
+
+  .glass-panel {
+    padding: 2.5rem;
+    border-radius: 30px;
+    max-width: 1000px;
+  }
+
+  .dashboard-header {
+    grid-template-areas: "left center right";
+    grid-template-columns: 1fr 2fr 1fr;
+    margin-bottom: 2rem;
+  }
+
+  .dashboard-center {
+    grid-area: center;
+  }
+
+  .dashboard-left {
+    grid-area: left;
+  }
+
+  .dashboard-right {
+    grid-area: right;
+  }
+
+  .score-display {
+    font-size: 2.5rem;
+    padding: 0.5rem 2.5rem;
+  }
+
+  .level-display {
+    font-size: 1.5rem;
+  }
+
+  .combo-text {
+    font-size: 1rem;
+  }
+
+  .stats-btn {
+    padding: 8px 24px;
+    font-size: 1rem;
+    border-radius: 20px;
+  }
+
+  .bottom-controls {
+    gap: 30px;
+    justify-content: center;
+  }
+
+  .mini-level-selector span {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
   }
 }

@@ -1,26 +1,28 @@
 .timer-circle-container {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 65px;
+  height: 65px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .timer-svg {
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
 }
 
 .circle-bg {
   fill: none;
   stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 6;
+  stroke-width: 8;
 }
 
 .circle-progress {
   fill: none;
   stroke: #00f2fe;
-  stroke-width: 6;
+  stroke-width: 8;
   stroke-linecap: round;
   transition: stroke-dashoffset 1s linear;
   filter: drop-shadow(0 0 4px #00f2fe);
@@ -35,12 +37,19 @@
   position: absolute;
   font-family: 'Segoe UI', sans-serif;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   color: white;
   text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-  .timer-display {
+/* Desktop sizing */
+@media (min-width: 768px) {
+  .timer-circle-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .timer-text {
     font-size: 1.2rem;
   }
 }
