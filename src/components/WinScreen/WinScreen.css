@@ -164,6 +164,20 @@
   color: #fff;
 }
 
+/* Share button status feedback */
+.btn-secondary-glass.status-copied,
+.btn-secondary-glass.status-shared {
+  background: rgba(46, 213, 115, 0.2);
+  border-color: #2ed573;
+  color: #2ed573;
+}
+
+.btn-secondary-glass.status-error {
+  background: rgba(255, 71, 87, 0.2);
+  border-color: #ff4757;
+  color: #ff4757;
+}
+
 /* Simple Particle Animation (Confetti) */
 .particles {
   position: absolute;

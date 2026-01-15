@@ -1,11 +1,90 @@
+import { useState } from 'react';
 import './WinScreen.css';
 
-function WinScreen({ onRestart, matchedPairs, timeElapsed }) {
+// Level order for progression
+const LEVEL_ORDER = ['easy', 'medium', 'hard'];
+
+function WinScreen({ onNextLevel, onRestart, onShareScore, matchedPairs, timeElapsed, currentLevel }) {
+  const [shareStatus, setShareStatus] = useState(null);
+  
   const minutes = Math.floor(timeElapsed / 60);
   const seconds = timeElapsed % 60;
   
-  // Fake score calculation for visual flair
+  // Score calculation
   const score = (matchedPairs * 1000) + Math.max(0, (300 - timeElapsed) * 50);
+
+  // Check if there's a next level
+  const currentLevelIndex = LEVEL_ORDER.indexOf(currentLevel);
+  const hasNextLevel = currentLevelIndex < LEVEL_ORDER.length - 1;
+  const nextLevel = hasNextLevel ? LEVEL_ORDER[currentLevelIndex + 1] : null;
+
+  // Handle next level / play again button
+  const handleNextLevelClick = () => {
+    if (hasNextLevel && onNextLevel) {
+      onNextLevel(nextLevel);
+    } else if (onRestart) {
+      // At max level, restart current level
+      onRestart();
+    }
+  };
+
+  // Handle share score
+  const handleShareScore = async () => {
+    const shareText = `🎮 Memory Match Game\n🏆 Level: ${currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)}\n⏱️ Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}\n🎴 Pairs: ${matchedPairs}\n⭐ Score: ${score.toLocaleString()}\n\nCan you beat my score?`;
+
+    // Try Web Share API first (works on mobile and some desktop browsers)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Memory Match Game - Score',
+          text: shareText,
+        });
+        setShareStatus('shared');
+        setTimeout(() => setShareStatus(null), 2000);
+      } catch (err) {
+        // User cancelled or share failed, try clipboard fallback
+        if (err.name !== 'AbortError') {
+          copyToClipboard(shareText);
+        }
+      }
+    } else {
+      // Fallback to clipboard
+      copyToClipboard(shareText);
+    }
+
+    // Call optional callback
+    if (onShareScore) {
+      onShareScore(score, currentLevel, timeElapsed);
+    }
+  };
+
+  // Clipboard fallback
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setShareStatus('copied');
+      setTimeout(() => setShareStatus(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      setShareStatus('error');
+      setTimeout(() => setShareStatus(null), 2000);
+    }
+  };
+
+  // Dynamic button text based on level
+  const nextLevelButtonText = hasNextLevel 
+    ? `PLAY NEXT LEVEL (${nextLevel?.toUpperCase()})` 
+    : 'PLAY AGAIN';
+
+  // Share button text based on status
+  const getShareButtonText = () => {
+    switch (shareStatus) {
+      case 'copied': return '✓ COPIED TO CLIPBOARD!';
+      case 'shared': return '✓ SHARED!';
+      case 'error': return '✗ SHARE FAILED';
+      default: return 'SHARE SCORE';
+    }
+  };
 
   return (
     <div className="overlay">
@@ -50,11 +129,14 @@ function WinScreen({ onRestart, matchedPairs, timeElapsed }) {
         </div>
 
         <div className="action-buttons">
-            <button className="btn-primary-neon" onClick={onRestart}>
-              PLAY NEXT LEVEL
+            <button className="btn-primary-neon" onClick={handleNextLevelClick}>
+              {nextLevelButtonText}
             </button>
-            <button className="btn-secondary-glass">
-              SHARE SCORE
+            <button 
+              className={`btn-secondary-glass ${shareStatus ? 'status-' + shareStatus : ''}`}
+              onClick={handleShareScore}
+            >
+              {getShareButtonText()}
             </button>
         </div>
       </div>

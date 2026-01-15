@@ -65,6 +65,21 @@ function App() {
     }, 100)
   }
 
+  // Navigate to next level
+  function handleNextLevel(nextLevel) {
+    dispatch({ 
+      type: GAME_ACTIONS.CHANGE_LEVEL, 
+      payload: { level: nextLevel } 
+    })
+    // The level change will trigger START_GAME via useEffect in GameContext
+  }
+
+  // Handle share score (optional callback for analytics/tracking)
+  function handleShareScore(score, level, timeElapsed) {
+    console.log('Score shared:', { score, level, timeElapsed })
+    // Future: Send to backend for leaderboards
+  }
+
   const totalTime = currentLevel.timerMinutes * 60; // Calculate total time in seconds
 
   return (
@@ -143,9 +158,12 @@ function App() {
 
       {state.gameStatus === 'won' && (
         <WinScreen 
+          onNextLevel={handleNextLevel}
           onRestart={startNewGame}
+          onShareScore={handleShareScore}
           matchedPairs={state.matchedPairs}
           timeElapsed={state.timeElapsed}
+          currentLevel={state.level}
         />
       )}
 
