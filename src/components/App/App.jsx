@@ -99,6 +99,11 @@ function App() {
     // Future: Send to backend for leaderboards
   }
 
+  function handleBackToMenu() {
+    dispatch({ type: GAME_ACTIONS.RESET_GAME })
+  }
+
+
   const totalTime = currentLevel.timerMinutes * 60; // Calculate total time in seconds
 
   return (
@@ -190,10 +195,12 @@ function App() {
       {state.gameStatus === 'lost' && (
         <LoseScreen 
           onRestart={startNewGame}
+          onBackToMenu={handleBackToMenu}
           matchedPairs={state.matchedPairs}
           totalPairs={totalPairs}
         />
       )}
+
     </div>
   )
 }
