@@ -31,7 +31,8 @@ export const initialState = {
   timeElapsed: 0,
   disabled: false,
   hintsRemaining: 0,
-  hintedCards: []
+  hintedCards: [],
+  combo: 0
 };
 
 // Reducer Function
@@ -50,7 +51,8 @@ export function gameReducer(state, action) {
         timeElapsed: 0,
         disabled: false,
         hintsRemaining: currentLevel.hints,
-        hintedCards: []
+        hintedCards: [],
+        combo: 0
       };
     }
 
@@ -88,6 +90,7 @@ export function gameReducer(state, action) {
         ...state,
         cards: updatedCards,
         matchedPairs: state.matchedPairs + 1,
+        combo: state.combo + 1,
         flippedCards: [],
         disabled: false
       };
@@ -105,6 +108,7 @@ export function gameReducer(state, action) {
         ...state,
         cards: updatedCards,
         flippedCards: [],
+        combo: 0,
         disabled: false
       };
     }

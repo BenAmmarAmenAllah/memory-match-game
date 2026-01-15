@@ -94,10 +94,10 @@ function App() {
 
           {/* Right: Combo & Stats */}
           <div className="dashboard-right">
-             <div className="combo-container">
-                <span className="combo-text">COMBO: {state.matchedPairs > 0 ? (state.matchedPairs % 5) + 1 : 0}x</span>
+              <div className="combo-container">
+                <span className="combo-text">COMBO: {state.combo}x</span>
                 <ProgressBar current={state.matchedPairs} total={totalPairs} />
-             </div>
+              </div>
              <button className="stats-btn">Stats</button>
           </div>
         </div>
