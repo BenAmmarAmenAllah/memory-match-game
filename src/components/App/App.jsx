@@ -8,6 +8,7 @@ import LoseScreen from '../LoseScreen/LoseScreen'
 import MatchedContainer from '../MatchedContainer/MatchedContainer'
 import HelpButton from '../HelpButton/HelpButton'
 import MusicPlayer from '../MusicPlayer/MusicPlayer'
+import SettingsButton from '../SettingsButton/SettingsButton'
 import { useGame, GAME_ACTIONS } from '../../context/GameContext'
 import { useAudio } from '../../context/AudioContext'
 import { LEVELS } from '../../data/levels'
@@ -146,6 +147,7 @@ function App() {
          <div className="bottom-controls">
             <HelpButton />
             <MusicPlayer />
+            <SettingsButton />
             {/* Level Controls as small pills below */}
             <div className="mini-level-selector">
                 <span onClick={() => handleLevelChange('easy')}>1</span>
