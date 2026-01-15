@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import Header from '../Header/Header'
 import GameBoard from '../GameBoard/GameBoard'
 import Timer from '../Timer/Timer'
@@ -16,13 +16,30 @@ import './App.css'
 
 function App() {
   const { state, dispatch } = useGame()
-  const { playSound } = useAudio()
+  const { playSound, startMusic, isInitialized } = useAudio()
   
   const currentLevel = LEVELS[state.level]
   const totalPairs = currentLevel.cardsCount / 2
   
   // Get matched cards for the container
   const matchedCards = state.cards.filter(card => card.isMatched)
+
+  // Auto-start music on first user interaction (satisfies browser autoplay policy)
+  const handleFirstInteraction = useCallback(() => {
+    if (!isInitialized) {
+      startMusic()
+    }
+  }, [isInitialized, startMusic])
+
+  // Add click listener to start music on first interaction
+  useEffect(() => {
+    if (!isInitialized) {
+      document.addEventListener('click', handleFirstInteraction, { once: true })
+      return () => {
+        document.removeEventListener('click', handleFirstInteraction)
+      }
+    }
+  }, [isInitialized, handleFirstInteraction])
 
   // Sound Effects
   useEffect(() => {
@@ -32,6 +49,7 @@ function App() {
         playSound('LOSE')
     }
   }, [state.gameStatus])
+
 
   useEffect(() => {
     if (state.matchedPairs > 0) {
