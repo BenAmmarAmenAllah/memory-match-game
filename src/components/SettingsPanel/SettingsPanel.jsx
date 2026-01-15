@@ -9,7 +9,11 @@ function SettingsPanel({ onClose }) {
     musicVolume,
     setMusicVolume,
     sfxVolume,
-    setSfxVolume
+    setSfxVolume,
+    isMuted,
+    toggleMute,
+    isPlaying,
+    toggleMusic
   } = useAudio();
 
   const { state, dispatch } = useGame();
@@ -89,6 +93,31 @@ function SettingsPanel({ onClose }) {
         <div className="settings-section">
           <h3>Audio Settings</h3>
           
+          {/* Music & Mute Toggles */}
+          <div className="toggles-container audio-toggles">
+            <div className="toggle-item">
+              <span>🎵 Background Music</span>
+              <button 
+                className={`toggle-switch ${isPlaying ? 'on' : 'off'}`}
+                onClick={toggleMusic}
+              >
+                <span className="toggle-knob"></span>
+                <span className="toggle-label">{isPlaying ? 'ON' : 'OFF'}</span>
+              </button>
+            </div>
+
+            <div className="toggle-item">
+              <span>🔇 Mute All</span>
+              <button 
+                className={`toggle-switch ${isMuted ? 'on' : 'off'}`}
+                onClick={toggleMute}
+              >
+                <span className="toggle-knob"></span>
+                <span className="toggle-label">{isMuted ? 'ON' : 'OFF'}</span>
+              </button>
+            </div>
+          </div>
+          
           <div className="slider-group music-slider">
             <div className="slider-label">
               <span>Music Volume:</span>
@@ -102,6 +131,7 @@ function SettingsPanel({ onClose }) {
               value={musicVolume}
               onChange={(e) => setMusicVolume(parseFloat(e.target.value))}
               className="custom-range range-blue"
+              disabled={isMuted}
             />
           </div>
 
@@ -118,6 +148,7 @@ function SettingsPanel({ onClose }) {
               value={sfxVolume}
               onChange={(e) => setSfxVolume(parseFloat(e.target.value))}
               className="custom-range range-purple"
+              disabled={isMuted}
             />
           </div>
         </div>
