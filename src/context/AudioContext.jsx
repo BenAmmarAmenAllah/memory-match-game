@@ -52,6 +52,10 @@ export const SOUND_EFFECTS = {
     file: '/audio/match.mp3',
     description: 'Successful pair match'
   },
+  NO_MATCH: {
+    file: '/audio/no-match.mp3',
+    description: 'Wrong pair - cards dont match'
+  },
   WIN: {
     file: '/audio/win.mp3',
     description: 'Game won celebration'
@@ -64,11 +68,10 @@ export const SOUND_EFFECTS = {
     file: '/audio/hint.mp3',
     description: 'Hint button used'
   },
-  // Add more SFX here:
-  // COMBO: {
-  //   file: '/audio/combo.mp3',
-  //   description: 'Combo streak sound'
-  // },
+  COMBO: {
+    file: '/audio/combo.mp3',
+    description: 'Combo streak sound (3+ matches)'
+  },
 };
 
 // Legacy support - keep AUDIO_FILES for backwards compatibility
