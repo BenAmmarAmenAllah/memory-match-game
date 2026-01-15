@@ -16,7 +16,8 @@ export const GAME_ACTIONS = {
   SET_DISABLED: 'SET_DISABLED',
   USE_HINT: 'USE_HINT',
   REVEAL_HINT: 'REVEAL_HINT',
-  HIDE_HINT: 'HIDE_HINT'
+  HIDE_HINT: 'HIDE_HINT',
+  TOGGLE_PAUSE: 'TOGGLE_PAUSE'
 };
 
 // Initial State
@@ -206,6 +207,19 @@ export function gameReducer(state, action) {
         cards: updatedCards,
         hintedCards: [],
         disabled: false
+      };
+    }
+
+    case GAME_ACTIONS.TOGGLE_PAUSE: {
+      if (state.gameStatus !== 'playing' && state.gameStatus !== 'paused') {
+        return state;
+      }
+
+      const isPaused = state.gameStatus === 'paused';
+      return {
+        ...state,
+        gameStatus: isPaused ? 'playing' : 'paused',
+        disabled: !isPaused // Disable board when pausing, enable when resuming
       };
     }
 

@@ -53,6 +53,10 @@ function App() {
     })
   }
 
+  function handleTogglePause() {
+    dispatch({ type: GAME_ACTIONS.TOGGLE_PAUSE })
+  }
+
   function startNewGame() {
     dispatch({ type: GAME_ACTIONS.RESET_GAME })
     // Trigger START_GAME via the useEffect in GameContext
@@ -66,7 +70,11 @@ function App() {
   return (
     <div className="app">
       <div className="pause-button-container">
-         <button className="pause-icon-btn">⏸ <br/><span style={{fontSize: '0.6rem'}}>Pause</span></button>
+         <button className="pause-icon-btn" onClick={handleTogglePause}>
+           {state.gameStatus === 'paused' ? '▶️' : '⏸'} 
+           <br/>
+           <span style={{fontSize: '0.6rem'}}>{state.gameStatus === 'paused' ? 'Resume' : 'Pause'}</span>
+         </button>
       </div>
 
       <div className="glass-panel">
@@ -109,6 +117,15 @@ function App() {
             disabled={state.disabled}
             gridColumns={currentLevel.gridColumns}
           />
+          {state.gameStatus === 'paused' && (
+            <div className="paused-overlay">
+              <div className="paused-content">
+                <span className="paused-icon">⏸</span>
+                <h2 className="paused-title">GAME PAUSED</h2>
+                <button className="btn-primary-neon" onClick={handleTogglePause}>RESUME</button>
+              </div>
+            </div>
+          )}
         </div>
         
          <div className="bottom-controls">
